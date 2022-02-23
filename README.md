@@ -26,3 +26,13 @@ Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namu
       Untuk mendownload gambar dari https://loremflickr.com/320/240 dengan jumlah sesuai dengan yang diinputkan oleh user. Hasil download akan dimasukkan ke dalam folder dengan         format nama YYYY-MM-DD_USERNAME. Gambar-gambar yang didownload juga memiliki format nama PIC_XX, dengan nomor yang berurutan (contoh : PIC_01, PIC_02, dst. ). Setelah             berhasildidownload semua, folder akan otomatis di zip dengan format nama yang sama dengan folder dan dipassword sesuai dengan password user tersebut. Apabila sudah terdapat       file zip dengan nama yang sama, maka file zip yang sudah ada di unzip terlebih dahulu,barulah mulai ditambahkan gambar yang baru, kemudian folder di zip kembali dengan             password sesuai dengan user.
     ii. att
     Menghitung jumlah percobaan login baik yang berhasil maupun tidak dari user yang sedang login saat ini.
+    
+    
+    
+    
+    
+    **inisiasi tempat file user.txt dan log.txt**
+``` c
+local locUser=/home/rendi/sisop/modul1/users/user.txt
+local locLog=/home/rendi/sisop/modul1/log.txt
+```
