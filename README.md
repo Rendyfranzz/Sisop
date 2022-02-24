@@ -25,13 +25,12 @@ Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namu
     i. dl N ( N = Jumlah gambar yang akan didownload) 
       Untuk mendownload gambar dari https://loremflickr.com/320/240 dengan jumlah sesuai dengan yang diinputkan oleh user. Hasil download akan dimasukkan ke dalam folder dengan         format nama YYYY-MM-DD_USERNAME. Gambar-gambar yang didownload juga memiliki format nama PIC_XX, dengan nomor yang berurutan (contoh : PIC_01, PIC_02, dst. ). Setelah             berhasildidownload semua, folder akan otomatis di zip dengan format nama yang sama dengan folder dan dipassword sesuai dengan password user tersebut. Apabila sudah terdapat       file zip dengan nama yang sama, maka file zip yang sudah ada di unzip terlebih dahulu,barulah mulai ditambahkan gambar yang baru, kemudian folder di zip kembali dengan             password sesuai dengan user.
     ii. att
-    Menghitung jumlah percobaan login baik yang berhasil maupun tidak dari user yang sedang login saat ini.
+    Menghitung jumlah percobaan login baik yang berhasil maupun tidak dari user yang sedang login saat ini. 
     
     
     
+inisiasi tempat file user.txt dan log.txt    
     
-    
-    ** inisiasi tempat file user.txt dan log.txt **
 ``` 
 local locUser=/home/rendi/sisop/modul1/users/user.txt
 local locLog=/home/rendi/sisop/modul1/log.txt
@@ -52,7 +51,7 @@ read -s password
 
 Setelah itu user dan password divalidasi dengan fungsi "func_check_password",dalam fungsi tersebut username dan password dicek agar sesuai dengan yang diminta pada soal
 
-** Cek apakah user sudah dibuat **
+Cek apakah user sudah dibuat
 ```
  if grep -q $username "$locUser"
     then
@@ -63,7 +62,7 @@ Setelah itu user dan password divalidasi dengan fungsi "func_check_password",dal
 ```
 jika username sudah ada pada $locUser maka username tersebut tidak valid sehingga tidak masuk sebagai username baru
 
-** Cek apakah password sama dengan username **
+Cek apakah password sama dengan username
 ```
  elif [[ $password == $username ]]
     then
@@ -71,7 +70,7 @@ jika username sudah ada pada $locUser maka username tersebut tidak valid sehingg
 ```
 jika password sama dengan username yang dimasukan maka username tersebut tidak valid 
 
-** Cek apakah password kurang dari 8 karakter **
+Cek apakah password kurang dari 8 karakter
 ```
 elif [[ $lengthPassword -lt 8 ]]
     then
@@ -79,7 +78,7 @@ elif [[ $lengthPassword -lt 8 ]]
 ```
 jika password kurang dari 8 karakter maka password tersebut tidak dapat digunakan sebagai password yang valid
 
-** Cek apakah password terdapat huruf kapital,huruf kecil,dan angka **
+Cek apakah password terdapat huruf kapital,huruf kecil,dan angka
 ```
 elif [[ "$password" != *[[:upper:]]* || "$password" != *[[:lower:]]* || "$password" != *[0-9]* ]]
     then
@@ -87,7 +86,7 @@ elif [[ "$password" != *[[:upper:]]* || "$password" != *[[:lower:]]* || "$passwo
 ```
 Jika password tidak terdapat minimal satu huruf kapital,huruf kecil,dan angka maka password tersebut tidak valid
 
-** Username dan password valid **
+Username dan password valid
 ```
 else
         echo "Register successfull!"
