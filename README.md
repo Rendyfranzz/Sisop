@@ -8,7 +8,7 @@ NRP | NAMA
 5025201056  | Rendi Dwi Francisko
 5025201239  | Kadek Ari Dharmika
 
-## Soal 1
+# Soal 1
 Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namun, karena laptop teman-temannya rusak ternyata tidak bisa dipakai karena rusak, Han dengan senang hati memperbolehkan teman-temannya untuk meminjam laptopnya. Untuk mempermudah pekerjaan mereka, Han membuat sebuah program.
   a. Han membuat sistem register pada script register.sh dan setiap user yang berhasil didaftarkan disimpan di dalam file ./users/user.txt. Han juga membuat sistem login yang dibuat di script main.sh
   b. Demi menjaga keamanan, input password pada login dan register harus tertutup/hidden dan password yang didaftarkan memiliki kriteria sebagai berikut
@@ -28,7 +28,7 @@ Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namu
     Menghitung jumlah percobaan login baik yang berhasil maupun tidak dari user yang sedang login saat ini. 
     
     
-# Pada register.sh    
+## Pada register.sh    
 inisiasi tempat file user.txt dan log.txt    
     
 ``` 
@@ -95,7 +95,7 @@ else
 ```
 Jika telah memenuhi semua kondisi maka user tersebut valid sehingga dapat dimasukan ke dalam $locUser
 
-# Pada main.sh
+## Pada main.sh
 pada main.sh terdapat 2 command yaitu att dan dl yang dimana command att digunakan untuk menghitung percobaan login dan command dl digunakan untuk download gambar pada web https://loremflickr.com/320/240.
 
 Inisiasi directory untuk menyimpan file hasil download
