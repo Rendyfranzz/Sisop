@@ -140,32 +140,40 @@ func_check_password(){
 jika password kurang dari 8 karakter serta tidak memiliki minimal satu hurud kapital,huruf kecil,dan angka maka login akan gagal,jika tidak maka login berhasil dan akan masuk ke dalam fungsi "func_login"
 ```
 func_login(){
-        if grep -q -e $username -e $password "$locUser"
+        checkUser=$(egrep $username "$locUser")
+        checkPass=$(egrep $password "$locUser")
+
+        if [[ ! -f "$locUser" ]]
         then
-                echo "$calendar $time LOGIN:INFO User $username logged in" >> $locLog
-                echo "Login success"
-
-                printf "Enter command [dl or att]: "
-                read command
-                if [[ $command == att ]]
-                then
-                        func_att
-                elif [[ $command == dl ]]
-                then
-                        func_dl_pic
-                else
-                        echo "Not found"
-                fi
-
+                echo "no user registered yet"
         else
-                fail="Failed login attemp on user $username"
-                echo $fail
+                if [[ -n "$checkUser" ]] && [[ -n "$checkPass" ]]
+                then
+                        echo "$calendar $time LOGIN:INFO User $username logged in" >> $locLog
+                        echo "Login success"
 
-                echo "$calendar $time LOGIN:ERROR $fail" >> $locLog
+                        printf "Enter command [dl or att]: "
+                        read command
+                        if [[ $command == att ]]
+                        then
+                                func_att
+                        elif [[ $command == dl ]]
+                        then
+                                func_dl_pic
+                        else
+                                echo "Not found"
+                        fi
+
+                else
+                        fail="Failed login attemp on user $username"
+                        echo $fail
+
+                        echo "$calendar $time LOGIN:ERROR $fail" >> $locLog
+                fi
         fi
 }
 ```
-pada fungsi login username dan password akan dicek kembali apakah ada dalam $lockUser jika ada maka login berhasil dan jika tidak ada maka login gagal dan akan dicatat ke dalam $locLog.Pada saat login berhasil maka user akan disuruh memasukan 2 command yaitu att dan dl,jika memasukkan command att maka akan masuk ke dalam fungsi "func_att"
+pada fungsi login akan dicek folder dan file user terlebih dahulu, jika file user.txt ditemukan maka akan mengecek username dan password akan dicek kembali apakah ada dalam $lockUser jika ada maka login berhasil dan jika tidak ada maka login gagal dan akan dicatat ke dalam $locLog.Pada saat login berhasil maka user akan disuruh memasukan 2 command yaitu att dan dl,jika memasukkan command att maka akan masuk ke dalam fungsi "func_att"
 ```
 func_att(){
         awk -v user="$username" 'BEGIN {count=0} $5 == user || $9 == user {count++} END {print (count)}' $locLog
