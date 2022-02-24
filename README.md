@@ -140,7 +140,7 @@ func_check_password(){
 jika password kurang dari 8 karakter serta tidak memiliki minimal satu hurud kapital,huruf kecil,dan angka maka login akan gagal,jika tidak maka login berhasil dan akan masuk ke dalam fungsi "func_login"
 ```
 func_login(){
-        if grep -q $password "$locUser"
+        if grep -q -e $username -e $password "$locUser"
         then
                 echo "$calendar $time LOGIN:INFO User $username logged in" >> $locLog
                 echo "Login success"
@@ -165,16 +165,13 @@ func_login(){
         fi
 }
 ```
-pada fungsi login password akan dicek kembali apakah ada dalam $lockUser jika ada maka login berhasil dan jika tidak ada maka login gagal dan akan dicatat ke dalam $locLog.Pada saat login berhasil maka user akan disuruh memasukan 2 command yaitu att dan dl,jika memasukkan command att maka akan masuk ke dalam fungsi "func_att"
+pada fungsi login username dan password akan dicek kembali apakah ada dalam $lockUser jika ada maka login berhasil dan jika tidak ada maka login gagal dan akan dicatat ke dalam $locLog.Pada saat login berhasil maka user akan disuruh memasukan 2 command yaitu att dan dl,jika memasukkan command att maka akan masuk ke dalam fungsi "func_att"
 ```
 func_att(){
-        awk '
-        BEGIN {print "Count login attemps"}
-        /LOGIN/ {++n}
-        END {print "Login attemps:", n}' $locLog
+        awk -v user="$username" 'BEGIN {count=0} $5 == user || $9 == user {count++} END {print (count)}' $locLog
 }
 ```
-pada fungsi "func_att" akan menampilkan berapa kali percobaan login yang telah dicatat dalam $locLog,jika user memasukan command dl maka akan masuk ke dalam fungsi "func_dl_pic"
+pada fungsi "func_att" akan menampilkan berapa kali percobaan login yang telah dilakukan oleh user yang login, kemudian akan dicatat dalam $locLog. jika user memasukan command dl maka akan masuk ke dalam fungsi "func_dl_pic"
 ```
 func_dl_pic(){
         printf "Enter number: "
@@ -191,7 +188,7 @@ func_dl_pic(){
 
 }
 ```
-Pada fungsi tersebut user memasukan jumlah gambar yang akan di download lalu dicek apakah $folder.zip sudah ada.$folder.zip merupakan nama file yang sesuai dengan tanggal,jika $folder.zip belum ada maka akan dibuatkan $folder.zip countnya 0 dan akan mulai start download dengan menggunakan fungsi "func_start_dl" 
+Pada fungsi tersebut user diminta memasukan jumlah gambar yang akan di download lalu dicek apakah $folder.zip sudah ada. $folder.zip merupakan nama file yang sesuai dengan tanggal,jika $folder.zip belum ada maka akan dibuatkan $folder.zip  countnya 0 dan akan mulai start download dengan menggunakan fungsi "func_start_dl" 
 ```
 func_start_dl(){
         for(( i=$count+1; i<=$n+$count; i++ ))
@@ -203,8 +200,8 @@ func_start_dl(){
         rm -rf $folder
 }
 ```
-Pada fungsi tersebut akan mulai dowonload gambar dengan jumlah yang diminta dengan menggunakan wget https://loremflickr.com/320/240 -O $folder/PIC_$i.jpg.Nama filenya .jpgnya sesuai dengan nama folder/PIC_(urutan gambar).jpg lalu foldernya di zip dan diberi password kemudian folder yang tidak memiliki format .zip akan dihapus.
-Kembali pada fungsi "func_dl_pic" jika $folder.zip telah ada maka folder tersebut akan di unzip terlebih dahulu dengan menggunakan fungsi "func_unzip"
+Pada fungsi tersebut akan mulai download gambar dengan jumlah yang diminta dengan menggunakan wget https://loremflickr.com/320/240 -O $folder/PIC_$i.jpg.Nama filenya .jpgnya sesuai dengan nama folder/PIC_(urutan gambar).jpg lalu foldernya di zip dan diberi password kemudian folder yang tidak memiliki format .zip akan dihapus.
+Kembali pada fungsi "func_dl_pic" jika $folder.zip telah ada maka file tersebut akan di unzip terlebih dahulu dengan menggunakan fungsi "func_unzip"
 ```
 func_unzip(){
         unzip -P $password $folder.zip
@@ -214,7 +211,7 @@ func_unzip(){
         func_start_dl
 }
 ```
-Pada fungsi tersebut $folder.zip akan di unzip dengan menggunakan password user lalu count akan dihitung dengan menghitung jumlah gambar yang telah di download,count ini digunakan untuk penamaan file gambarnya,lalu akan masuk ke dalam fungsi "func_start_dl".
+Pada fungsi tersebut $folder.zip akan di unzip dengan menggunakan password user dan file .zip dihapus, lalu count akan dihitung dengan menghitung jumlah gambar yang telah di download, count ini digunakan untuk penamaan file gambarnya, lalu akan masuk ke dalam fungsi "func_start_dl".
 
 
 
