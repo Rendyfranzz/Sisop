@@ -31,7 +31,7 @@ Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namu
 ## Pada register.sh    
 inisiasi tempat file user.txt dan log.txt    
     
-``` 
+``` c
 local locUser=/home/rendi/sisop/modul1/users/user.txt
 local locLog=/home/rendi/sisop/modul1/log.txt
 ```
