@@ -31,8 +31,72 @@ Pada suatu hari, Han dan teman-temannya diberikan tugas untuk mencari foto. Namu
     
     
     
-    **inisiasi tempat file user.txt dan log.txt**
-``` c
+    ** inisiasi tempat file user.txt dan log.txt **
+``` 
 local locUser=/home/rendi/sisop/modul1/users/user.txt
 local locLog=/home/rendi/sisop/modul1/log.txt
 ```
+Kemudian tanggal dan jamnya dicatat
+```
+calendar=$(date +%D)
+time=$(date +%T)
+```
+Lalu user memasukan input username serta password
+```
+printf "Enter your username: "
+read username
+
+printf "Enter yout password: "
+read -s password
+```
+
+Setelah itu user dan password divalidasi dengan fungsi "func_check_password",dalam fungsi tersebut username dan password dicek agar sesuai dengan yang diminta pada soal
+
+** Cek apakah user sudah dibuat **
+```
+ if grep -q $username "$locUser"
+    then
+        existsUser="User already exists"
+
+        echo $existsUser
+        echo $calendar $time REGISTER:ERROR $existsUser >> $locLog
+```
+jika username sudah ada pada $locUser maka username tersebut tidak valid sehingga tidak masuk sebagai username baru
+
+** Cek apakah password sama dengan username **
+```
+ elif [[ $password == $username ]]
+    then
+        echo "Password cannot be the same as username"
+```
+jika password sama dengan username yang dimasukan maka username tersebut tidak valid 
+
+** Cek apakah password kurang dari 8 karakter **
+```
+elif [[ $lengthPassword -lt 8 ]]
+    then
+        echo "Password must be more than 8 characters"
+```
+jika password kurang dari 8 karakter maka password tersebut tidak dapat digunakan sebagai password yang valid
+
+** Cek apakah password terdapat huruf kapital,huruf kecil,dan angka **
+```
+elif [[ "$password" != *[[:upper:]]* || "$password" != *[[:lower:]]* || "$password" != *[0-9]* ]]
+    then
+        echo "Password must be at least upper, lower and number!"
+```
+Jika password tidak terdapat minimal satu huruf kapital,huruf kecil,dan angka maka password tersebut tidak valid
+
+** Username dan password valid **
+```
+else
+        echo "Register successfull!"
+        echo REGISTER:INFO User $username registered successfully >> $locLog
+        echo $calendar $time $username $password >> $locUser
+```
+Jika telah memenuhi semua kondisi maka user tersebut valid sehingga dapat dimasukan ke dalam $locUser
+
+
+
+
+
