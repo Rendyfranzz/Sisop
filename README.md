@@ -276,7 +276,7 @@ cat $locLog | awk -F: '{gsub(/"/, "", $3)
                 printf "rata rata serangan perjam adalah sebanyak %.3f request per jam\n\n", res
         }' >> $folder/ratarata.txt
 ```
-#Soal 3
+# Soal 3
 Conan adalah seorang detektif terkenal. Suatu hari, Conan menerima beberapa laporan tentang hewan di kebun binatang yang tiba-tiba hilang. Karena jenis-jenis hewan yang hilang banyak, maka perlu melakukan klasifikasi hewan apa saja yang hilang
     a.Untuk mempercepat klasifikasi, Conan diminta membuat program untuk membuat 2 directory di “/home/[USER]/modul2/” dengan nama “darat” lalu 3 detik kemudian membuat directory ke 2 dengan nama “air”.
     b.Kemudian program diminta dapat melakukan extract “animal.zip” di “/home/[USER]/modul2/”.
@@ -291,7 +291,7 @@ catatan:
 -Gunakan exec dan fork
 -Direktori “.” dan “..” tidak termasuk
 
-###A
+### A
 ```
 void create_dir(){
     pid_t ch = fork();
@@ -310,7 +310,7 @@ void create_dir(){
 ```
 Membuat directory darat dan air pada /home/rendi/modul2/.Pembuatan directory dimualai dari directory darat terlebih dahulu kemudian tunggu 3 detik setelah itu membuat directory air.Untuk jeda 3 detik digunakan "sleep(3)"
 
-###B
+### B
 ```
 void unzip(){
 
@@ -324,7 +324,7 @@ void unzip(){
 }
 ```
 File zip berada pada directory "/home/rendi/sisop/modul2/animal.zip" kemudian diunzip ke dalam directory "/home/rendi/modul2/" dengan sebuah perintah "-d" yaitu tempat kemana file akan diunzip.
-###C
+### C
 ```
 void delete_substr(char *str, char *substr){
     char *comp;
@@ -402,7 +402,7 @@ void move_animals(){
 }
 ```
 Langkah awalnya yaitu menuju directory "/home/rendi/modul2/animal/" kemudian abaikan file "." dan ".." kemudian simpan nama file lalu sesuaikan dengan kriteria nama file yang dimaksud jika nama file ada kata darat maka akan dipindah ke directory "/home/rendi/modul2/animal/darat" jika nama file ada kata air maka file akan dipindahkan ke directory "/home/rendi/modul2/animal/air" dan jika nama file tidak ada kata darat ataupun air maka file tersebut akan dihapus.
-###D
+### D
 ```
 void delete_bird(){
     DIR *dir;
@@ -433,7 +433,7 @@ void delete_bird(){
 }
 ```
 Karena file dengan nama bird ada di folder darat maka buka directory "/home/rendi/modul2/darat/" lalu selama filenya masih ada isinya cek nama file ("." dan ".." diabaikan) jika nama file terdapat kata "bird" maka file akan dihapus.
-###E
+### E
 ```
 void create_list(){
     FILE *fp;
