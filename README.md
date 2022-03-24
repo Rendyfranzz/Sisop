@@ -276,4 +276,245 @@ cat $locLog | awk -F: '{gsub(/"/, "", $3)
                 printf "rata rata serangan perjam adalah sebanyak %.3f request per jam\n\n", res
         }' >> $folder/ratarata.txt
 ```
+#Soal 3
+Conan adalah seorang detektif terkenal. Suatu hari, Conan menerima beberapa laporan tentang hewan di kebun binatang yang tiba-tiba hilang. Karena jenis-jenis hewan yang hilang banyak, maka perlu melakukan klasifikasi hewan apa saja yang hilang
+    a.Untuk mempercepat klasifikasi, Conan diminta membuat program untuk membuat 2 directory di “/home/[USER]/modul2/” dengan nama “darat” lalu 3 detik kemudian membuat directory ke 2 dengan nama “air”.
+    b.Kemudian program diminta dapat melakukan extract “animal.zip” di “/home/[USER]/modul2/”.
+    c.Tidak hanya itu, hasil extract dipisah menjadi hewan darat dan hewan air sesuai dengan nama filenya. Untuk hewan darat dimasukkan ke folder “/home/[USER]/modul2/darat” dan untuk hewan air dimasukkan ke folder “/home/[USER]/modul2/air”. Rentang pembuatan antara folder darat dengan folder air adalah 3 detik dimana folder darat dibuat terlebih dahulu. Untuk hewan yang tidak ada keterangan air atau darat harus dihapus.
+    d.Setelah berhasil memisahkan hewan berdasarkan hewan darat atau hewan air. Dikarenakan jumlah burung yang ada di kebun binatang terlalu banyak, maka pihak kebun binatang harus merelakannya sehingga conan harus menghapus semua burung yang ada di directory “/home/[USER]/modul2/darat”. Hewan burung ditandai dengan adanya “bird” pada nama file.
+    e.Terakhir, Conan harus membuat file list.txt di folder “/home/[USER]/modul2/air” dan membuat list nama semua hewan yang ada di directory “/home/[USER]/modul2/air” ke “list.txt” dengan format UID_[UID file permission]_Nama File.[jpg/png] dimana UID adalah user dari file tersebut file permission adalah permission dari file tersebut.
+Contoh : conan_rwx_hewan.png
+
+catatan:
+-Tidak boleh memakai system().
+-Tidak boleh memakai function C mkdir() ataupun rename().
+-Gunakan exec dan fork
+-Direktori “.” dan “..” tidak termasuk
+
+###A
+```
+void create_dir(){
+    pid_t ch = fork();
+    int status;
+
+    if(ch == 0){
+        char *argv[] = {"mkdir", "-p", "/home/rendi/modul2/darat", NULL};
+        execv("/bin/mkdir", argv);
+    }else{
+        while((wait(&status)) > 0);
+        sleep(3);
+        char *argv[] = {"mkdir", "-p", "/home/rendi/modul2/air", NULL};
+        execv("/bin/mkdir", argv);
+    }
+}
+```
+Membuat directory darat dan air pada /home/rendi/modul2/.Pembuatan directory dimualai dari directory darat terlebih dahulu kemudian tunggu 3 detik setelah itu membuat directory air.Untuk jeda 3 detik digunakan "sleep(3)"
+
+###B
+```
+void unzip(){
+
+    int status;
+
+    if(fork() == 0){
+        char *argv[] = {"unzip", "/home/rendi/sisop/modul2/animal.zip", "-d", "/home/rendi/modul2/", NULL};
+        execv("/bin/unzip", argv);
+    }
+    while((wait(&status)) > 0 );
+}
+```
+File zip berada pada directory "/home/rendi/sisop/modul2/animal.zip" kemudian diunzip ke dalam directory "/home/rendi/modul2/" dengan sebuah perintah "-d" yaitu tempat kemana file akan diunzip.
+###C
+```
+void delete_substr(char *str, char *substr){
+    char *comp;
+    int png = strlen(substr);
+    while((comp = strstr(str, substr))){
+        *comp = '\0';
+        strcat(str, comp+png);
+    }
+}
+void move_animals(){
+    DIR *dir;
+    struct dirent *dp;
+    
+    char from[PATH_MAX];
+    char dest[PATH_MAX];
+
+    strcpy(from, "/home/rendi/modul2/animal/");
+    dir = opendir(from);
+
+    while((dp = readdir(dir)) != NULL){
+        if(strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 ){
+            
+            char fileName[NAME_MAX];
+            strcpy(fileName, dp->d_name);
+            delete_substr(fileName, ".jpg");
+
+            strcpy(from, "/home/rendi/modul2/animal/");
+            strcat(from, dp->d_name);
+            strcpy(dest, "/home/rendi/modul2/");
+
+            pid_t child = fork();
+            int status;
+            
+            char *token;
+            token = strtok(fileName, "_");
+            int flag = 0;
+            while(token != NULL){
+
+                if(flag == 1){
+                    if(strcmp(token, "air") == 0){
+                        // printf("AIR: %s --> %s\n\n", from, dest);
+                        strcat(dest, "air");
+                        // printf("air %s --> %s\n", from, dest);
+
+                        if(child == 0){
+                            char *argv[] = {"mv", from, dest, NULL};
+                            execv("/bin/mv", argv);
+                        }
+                        while((wait(&status)) > 0);
+                    }
+
+                    if(strcmp(token, "darat") == 0 || strcmp(token, "bird") == 0){
+                        // printf("DARAT: %s --> %s\n\n", from, dest);
+                        strcat(dest, "darat");
+                        // printf("darat %s --> %s\n", from, dest);
+                        if(child == 0){
+                            char *argv[] = {"mv", from, dest, NULL};
+                            execv("/bin/mv", argv);
+                        }
+                        while((wait(&status)) > 0);
+                    }
+                }
+
+                token = strtok(NULL, "_");
+                flag++;
+            }
+
+            if(child == 0){
+                char *argv[] = {"rm", "-rf", from, NULL};
+                execv("/bin/rm", argv);
+            }
+            while((wait(&status)) > 0);
+        }
+    }
+}
+```
+Langkah awalnya yaitu menuju directory "/home/rendi/modul2/animal/" kemudian abaikan file "." dan ".." kemudian simpan nama file lalu sesuaikan dengan kriteria nama file yang dimaksud jika nama file ada kata darat maka akan dipindah ke directory "/home/rendi/modul2/animal/darat" jika nama file ada kata air maka file akan dipindahkan ke directory "/home/rendi/modul2/animal/air" dan jika nama file tidak ada kata darat ataupun air maka file tersebut akan dihapus.
+###D
+```
+void delete_bird(){
+    DIR *dir;
+    struct dirent *dp;
+    
+    char path[PATH_MAX];
+
+    strcpy(path, "/home/rendi/modul2/darat/");
+    dir = opendir(path);
+
+    while((dp = readdir(dir)) != NULL){
+        if(strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 ){
+            
+            strcpy(path, "/home/rendi/modul2/darat/");
+            strcat(path, dp->d_name);
+            pid_t child = fork();
+            int status;
+
+            if(strstr(dp->d_name, "bird") != 0){
+                if(child == 0){
+                    char *argv[] = {"rm", "-rf", path, NULL};
+                    execv("/bin/rm", argv);
+                }
+                while((wait(&status)) > 0);
+            }
+        }
+    }
+}
+```
+Karena file dengan nama bird ada di folder darat maka buka directory "/home/rendi/modul2/darat/" lalu selama filenya masih ada isinya cek nama file ("." dan ".." diabaikan) jika nama file terdapat kata "bird" maka file akan dihapus.
+###E
+```
+void create_list(){
+    FILE *fp;
+    DIR *dir;
+    struct stat info;
+    struct stat fs;
+    struct dirent *dp;
+    int r;
+    int p;
+
+    char path[PATH_MAX];
+    char permission[NAME_MAX];
+    char list[NAME_MAX];
+
+    strcpy(path, "/home/rendi/modul2/air/");
+    strcpy(list, path);
+    strcat(list, "list.txt");
+    fp = fopen(list, "a");
+    dir = opendir(path);
+
+    // permission
+    p = stat(path, &fs);
+    if (p == -1){
+        fprintf(stderr,"File error\n");
+        exit(1);
+    }
+
+    // owner
+    r = stat(path, &info);
+    if( r==-1 ){
+        fprintf(stderr,"File error\n");
+        exit(1);
+    }
+
+    while((dp = readdir(dir)) != NULL){
+        if(strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0 ){
+            
+            strcat(path, dp->d_name);
+
+            char owner[NAME_MAX];
+            char p_r[NAME_MAX];
+            char p_w[NAME_MAX];
+            char p_x[NAME_MAX];
+            
+            // owner
+            struct passwd *pw = getpwuid(info.st_uid);
+            if (pw != 0) strcpy(owner, pw->pw_name); //puts(pw->pw_name);
+
+            // permission
+            if (fs.st_mode & S_IRUSR) strcpy(p_r, "r");
+            if (fs.st_mode & S_IWUSR) strcpy(p_w, "w");
+            if (fs.st_mode & S_IXUSR) strcpy(p_x, "x");
+
+            if(strstr(dp->d_name, "list") == 0){
+                fprintf(fp, "%s_%s%s%s_%s\n", owner, p_r, p_w, p_x, dp->d_name);
+            }
+        }
+    }
+
+    fclose(fp);
+    return;
+}
+```
+Pertama buka diectory "/home/rendi/modul2/air/" lalu buat file "list.txt" lalu pada directory "/home/rendi/modul2/air/" setiap file akan dicek UID dan file permission lalu akan dituliskan ke dalam file "list.txt" dengan format penamaan yang sudah ditentukan.Untuk menadapatkan UID dilakukan dengan cara berikut
+```
+ // owner
+            struct passwd *pw = getpwuid(info.st_uid);
+            if (pw != 0) strcpy(owner, pw->pw_name); //puts(pw->pw_name);
+```
+Untuk mendapatkan file permission menggunakan cara berikut
+```
+ // permission
+            if (fs.st_mode & S_IRUSR) strcpy(p_r, "r");
+            if (fs.st_mode & S_IWUSR) strcpy(p_w, "w");
+            if (fs.st_mode & S_IXUSR) strcpy(p_x, "x");
+```
+Kemudian akan ditulis di "list.txt" dengan cara berikut
+```
+if(strstr(dp->d_name, "list") == 0){
+                fprintf(fp, "%s_%s%s%s_%s\n", owner, p_r, p_w, p_x, dp->d_name);
+           }
+```
+
 
